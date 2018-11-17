@@ -1,0 +1,34 @@
+version: '2'
+services:
+  web-server:
+    image: nginx:alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx/site.conf:/etc/nginx/conf.d/site.conf
+
+  app:
+    build: .
+
+  db:
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment: 
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: laravel
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: 123456
+    volumes: 
+      - laravel_db:/var/lib/mysql
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8888:8080
+    depends_on:
+      - db
+  
+volumes:
+  laravel_db:
